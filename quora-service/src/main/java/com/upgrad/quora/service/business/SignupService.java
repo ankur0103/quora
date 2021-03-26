@@ -23,12 +23,11 @@ public class SignupService {
 
         System.out.println("test kar rha hun"+userEntity.getUserName());
         UserEntity userByUserName = userDao.getUserByUserName(userEntity.getUserName());
-if(userByUserName!=null){
-
-    System.out.println("user mila");
-}else{
-    System.out.println("user nahi mila");
-}
+        if(userByUserName!=null){
+            System.out.println("user mila");
+        }else{
+            System.out.println("user nahi mila");
+        }
 
         if(userByUserName != null) {
             throw new SignUpRestrictedException("SGR-001", "Try any other Username, this Username has already been taken");

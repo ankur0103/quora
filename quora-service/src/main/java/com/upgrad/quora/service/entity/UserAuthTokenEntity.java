@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "user_auth_tokens", schema = "quora")
 @NamedQueries({
-        @NamedQuery(name = "userAuthTokenByAccessToken" , query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken ")
+        @NamedQuery(name = "userAuthTokenByAccessToken", query = "select ut from UserAuthTokenEntity ut where ut.accessToken = :accessToken ")
 })
 public class UserAuthTokenEntity implements Serializable {
 
@@ -42,7 +42,8 @@ public class UserAuthTokenEntity implements Serializable {
     private ZonedDateTime expiresAt;
 
     @Column(name = "LOGOUT_AT")
-    private ZonedDateTime logoutAt;
+    private ≥…………………………≥≥
+    ZonedDateTime logoutAt;
 
 
     public Integer getId() {

@@ -5,7 +5,7 @@ import com.upgrad.quora.api.model.SignoutResponse;
 import com.upgrad.quora.api.model.SignupUserRequest;
 import com.upgrad.quora.api.model.SignupUserResponse;
 import com.upgrad.quora.service.business.SigninService;
-import com.upgrad.quora.service.business.SignoutSerivice;
+import com.upgrad.quora.service.business.SignoutService;
 import com.upgrad.quora.service.business.SignupService;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.entity.UserEntity;
@@ -34,7 +34,7 @@ public class UserController {
     private SigninService signinService;
 
     @Autowired
-    private SignoutSerivice signoutSerivice;
+    private SignoutService signoutService;
 
     @RequestMapping(method = RequestMethod.POST, path ="/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> signup(@RequestBody  final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
@@ -82,7 +82,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST, path = "/user/signout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignoutResponse> signout(@RequestHeader("authorization") final String authorization) throws SignOutRestrictedException {
 
-        UserAuthTokenEntity userAuthTokenEntity = signoutSerivice.signout(authorization);
+        UserAuthTokenEntity userAuthTokenEntity = signoutService.signout(authorization);
         SignoutResponse signoutResponse = new SignoutResponse();
 
         signoutResponse.setId(userAuthTokenEntity.getUser().getUuid());
