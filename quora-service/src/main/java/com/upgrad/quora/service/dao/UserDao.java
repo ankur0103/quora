@@ -18,6 +18,11 @@ public class UserDao {
         return userEntity;
     }
 
+    public UserEntity deleteUser(UserEntity userEntity) {
+        entityManager.remove(userEntity);
+        return userEntity;
+    }
+
     public UserEntity getUserByEmail(final String email) {
 
         try {
