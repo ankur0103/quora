@@ -8,6 +8,7 @@ import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -77,10 +78,8 @@ public class QuestionController {
 
     @RequestMapping(method = RequestMethod.GET, path = "question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser (@PathVariable("userId") final String userId,
-                                                                                @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
-
-        userDetailsService.getUserDetailsByAccessToken(accessToken);
-        List<QuestionEntity> questionEntityList = questionService.getAllQuestionsByUuid(userId);
+                                                                                @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestionsByUuid(userId, accessToken);
 
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<>();
 
@@ -102,8 +101,6 @@ public class QuestionController {
     public ResponseEntity<QuestionEditResponse> editQuestion (@RequestBody final QuestionEditRequest questionEditRequest,
                                                               @RequestHeader("authorization") final String accessToken,
                                                               @PathVariable("questionId") final String questionId) throws AuthorizationFailedException, InvalidQuestionException {
-
-        UserAuthTokenEntity userAuthTokenEntity = userDetailsService.getUserDetailsByAccessToken(accessToken);
         QuestionEntity questionEntity = questionService.editQuestion(questionId, accessToken);
 
         QuestionEditResponse questionEditResponse = new QuestionEditResponse();

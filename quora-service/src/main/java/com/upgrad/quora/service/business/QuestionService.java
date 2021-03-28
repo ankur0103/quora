@@ -1,10 +1,13 @@
 package com.upgrad.quora.service.business;
 
 import com.upgrad.quora.service.dao.QuestionDao;
+import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
+import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.InvalidQuestionException;
+import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,9 @@ public class QuestionService {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private UserDao userDao;
 
     public QuestionEntity createQuestion(QuestionEntity questionEntity, final String accessToken) throws  AuthorizationFailedException {
         return questionDao.createQuestion(questionEntity);
@@ -64,8 +70,23 @@ public class QuestionService {
     }
 
 
-    public List<QuestionEntity> getAllQuestionsByUuid(final String uuid) {
+    public List<QuestionEntity> getAllQuestionsByUuid(final String uuid, final String accessToken) throws AuthorizationFailedException, UserNotFoundException {
+        userDetailsService.getUserDetailsByAccessToken(accessToken);
+        UserEntity userEntity = userDao.getUserByUuid(uuid);
+        if (userEntity == null) {
+            throw new UserNotFoundException("USR-001", "User with entered uuid whose question details are to be seen does not exist");
+        }
         return questionDao.getQuestionByUuid(uuid);
+
+    }
+
+    public QuestionEntity getQuestionByQuestionId(final String questionId) throws InvalidQuestionException{
+
+        QuestionEntity questionEntity = questionDao.getQuestionByQuestionId(questionId);
+        if(questionEntity == null) {
+            throw new InvalidQuestionException("QUES-001", "The question entered is invalid");
+        }
+        return questionEntity;
 
     }
 
