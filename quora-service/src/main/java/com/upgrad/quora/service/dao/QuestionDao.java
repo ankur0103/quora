@@ -1,7 +1,6 @@
 package com.upgrad.quora.service.dao;
 
 import com.upgrad.quora.service.entity.QuestionEntity;
-import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -25,6 +24,21 @@ public class QuestionDao {
         return questionEntity;
     }
 
+    public QuestionEntity editQuestion(QuestionEntity questionEntity) {
+        entityManager.merge(questionEntity);
+        return questionEntity;
+    }
+
+    public List<QuestionEntity> getAllQuestion() {
+
+        try {
+            return entityManager.createNamedQuery("allQuestion", QuestionEntity.class).getResultList();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+
     public List<QuestionEntity> getQuestionByUuid(final String uuid) {
 
         try {
@@ -35,25 +49,12 @@ public class QuestionDao {
     }
 
 
-    public UserAuthTokenEntity createAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
-        entityManager.persist(userAuthTokenEntity);
-        return userAuthTokenEntity;
-    }
+    public QuestionEntity getQuestionByQuestionId(final String questionId) {
 
-
-    public UserAuthTokenEntity getUserAuthToken(final String accessToken){
         try {
-            return entityManager.createNamedQuery("userAuthTokenByAccessToken",
-                    UserAuthTokenEntity.class).setParameter("accessToken", accessToken).getSingleResult();
-        } catch (NoResultException nre){
+            return entityManager.createNamedQuery("questionByQuestionId", QuestionEntity.class).setParameter("id", questionId).getSingleResult();
+        } catch (NoResultException nre) {
             return null;
         }
-
-    }
-
-
-    public UserAuthTokenEntity updateUserAuthToken(final UserAuthTokenEntity userAuthTokenEntity) {
-        entityManager.merge(userAuthTokenEntity);
-        return userAuthTokenEntity;
     }
 }

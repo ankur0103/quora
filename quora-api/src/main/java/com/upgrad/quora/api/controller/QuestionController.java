@@ -1,14 +1,13 @@
 package com.upgrad.quora.api.controller;
 
 
-import com.upgrad.quora.api.model.QuestionDetailsResponse;
-import com.upgrad.quora.api.model.QuestionRequest;
-import com.upgrad.quora.api.model.QuestionResponse;
+import com.upgrad.quora.api.model.*;
 import com.upgrad.quora.service.business.QuestionService;
 import com.upgrad.quora.service.business.UserDetailsService;
 import com.upgrad.quora.service.entity.QuestionEntity;
 import com.upgrad.quora.service.entity.UserAuthTokenEntity;
 import com.upgrad.quora.service.exception.AuthorizationFailedException;
+import com.upgrad.quora.service.exception.InvalidQuestionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,7 +57,7 @@ public class QuestionController {
     public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestions (@RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
 
         UserAuthTokenEntity userAuthTokenEntity = userDetailsService.getUserDetailsByAccessToken(accessToken);
-        List<QuestionEntity> questionEntityList = questionService.getAllQuestionsByUuid(userAuthTokenEntity.getUser().getUuid());
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestion();
 
         List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<>();
 
@@ -74,4 +73,45 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponseList, HttpStatus.OK);
 
     }
+
+
+    @RequestMapping(method = RequestMethod.GET, path = "question/all/{userId}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<List<QuestionDetailsResponse>> getAllQuestionsByUser (@PathVariable("userId") final String userId,
+                                                                                @RequestHeader("authorization") final String accessToken) throws AuthorizationFailedException {
+
+        userDetailsService.getUserDetailsByAccessToken(accessToken);
+        List<QuestionEntity> questionEntityList = questionService.getAllQuestionsByUuid(userId);
+
+        List<QuestionDetailsResponse> questionDetailsResponseList = new ArrayList<>();
+
+        Iterator iterator = questionEntityList.iterator();
+        while(iterator.hasNext()) {
+            QuestionEntity questionEntity = (QuestionEntity) iterator.next();
+            QuestionDetailsResponse questionDetailsResponse = new QuestionDetailsResponse();
+            questionDetailsResponse.setContent(questionEntity.getContent());
+            questionDetailsResponse.setId(questionEntity.getUuid());
+            questionDetailsResponseList.add(questionDetailsResponse);
+        }
+
+        return new ResponseEntity<List<QuestionDetailsResponse>>(questionDetailsResponseList, HttpStatus.OK);
+
+    }
+
+
+    @RequestMapping(method = RequestMethod.PUT, path = "/question/edit/{questionId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<QuestionEditResponse> editQuestion (@RequestBody final QuestionEditRequest questionEditRequest,
+                                                              @RequestHeader("authorization") final String accessToken,
+                                                              @PathVariable("questionId") final String questionId) throws AuthorizationFailedException, InvalidQuestionException {
+
+        UserAuthTokenEntity userAuthTokenEntity = userDetailsService.getUserDetailsByAccessToken(accessToken);
+        QuestionEntity questionEntity = questionService.editQuestion(questionId, accessToken);
+
+        QuestionEditResponse questionEditResponse = new QuestionEditResponse();
+        questionEditResponse.setId(questionEntity.getUuid());
+        questionEditResponse.setStatus("QUESTION EDITED");
+
+        return new ResponseEntity<QuestionEditResponse>(questionEditResponse, HttpStatus.OK);
+
+    }
+
 }
