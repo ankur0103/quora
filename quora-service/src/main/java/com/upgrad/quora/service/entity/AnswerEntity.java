@@ -9,7 +9,11 @@ import java.time.ZonedDateTime;
 @Entity
 @Table(name = "answer", schema = "quora")
 @NamedQueries({
-        @NamedQuery(name = "questionByUuId", query = "select q from question q where q.uuid = :uuid ")
+        @NamedQuery(name = "answerByAnswerId", query = "select a from answer a where a.id = :answerId"),
+        @NamedQuery(name = "answerByQuestionId", query = "select a from answer a where a.questionId = :questionId")
+
+
+
 })
 public class AnswerEntity {
 
