@@ -111,4 +111,19 @@ public class QuestionController {
 
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, path = "/question/delete/{questionId}",  produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<QuestionDeleteResponse> deleteQuestion (
+                                                              @RequestHeader("authorization") final String accessToken,
+                                                              @PathVariable("questionId") final String questionId) throws AuthorizationFailedException, InvalidQuestionException {
+        QuestionEntity questionEntity = questionService.deleteQuestion(questionId, accessToken);
+
+        QuestionDeleteResponse qdr = new QuestionDeleteResponse();
+        qdr.setId(questionEntity.getUuid());
+        qdr.setStatus("Question Deleted");
+
+
+        return new ResponseEntity<QuestionDeleteResponse>(qdr, HttpStatus.OK);
+
+    }
+
 }

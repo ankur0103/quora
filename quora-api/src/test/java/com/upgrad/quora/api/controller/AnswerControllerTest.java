@@ -1,6 +1,11 @@
 package com.upgrad.quora.api.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.upgrad.quora.api.model.AnswerEditRequest;
+import com.upgrad.quora.api.model.AnswerRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +32,16 @@ public class AnswerControllerTest {
     //This test case passes when you try to create the answer but the JWT token entered does not exist in the database.
     @Test
     public void createAnswerWithNonExistingAccessToken() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/question/database_question_uuid/answer/create?answer=my_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "non_existing_access_token"))
+        AnswerRequest ar = new AnswerRequest();
+        ar.setAnswer("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+
+        mvc.perform(MockMvcRequestBuilders.post("/question/database_question_uuid/answer/create").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "non_existing_access_token"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-001"));
     }
@@ -35,7 +49,15 @@ public class AnswerControllerTest {
     //This test case passes when you try to create the answer but the user corresponding to the JWT token entered is signed out of the application.
     @Test
     public void createAnswerWithSignedOutUser() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/question/database_question_uuid/answer/create?answer=my_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken3"))
+        AnswerRequest ar = new AnswerRequest();
+        ar.setAnswer("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+        mvc.perform(MockMvcRequestBuilders.post("/question/database_question_uuid/answer/create").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken3"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-002"));
     }
@@ -43,7 +65,15 @@ public class AnswerControllerTest {
     //This test case passes when you try to create the answer for the question which does not exist in the database.
     @Test
     public void createAnswerForNonExistingQuestion() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/question/non_existing_question_uuid/answer/create?answer=my_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken"))
+        AnswerRequest ar = new AnswerRequest();
+        ar.setAnswer("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+        mvc.perform(MockMvcRequestBuilders.post("/question/non_existing_question_uuid/answer/create").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("QUES-001"));
     }
@@ -51,7 +81,15 @@ public class AnswerControllerTest {
     //This test case passes when you try to edit the answer but the JWT token entered does not exist in the database.
     @Test
     public void editAnswerWithNonExistingAccessToken() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid?content=edited_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "non_existing_access_token"))
+        AnswerEditRequest ar = new AnswerEditRequest();
+        ar.setContent("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "non_existing_access_token"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-001"));
     }
@@ -59,7 +97,15 @@ public class AnswerControllerTest {
     //This test case passes when you try to edit the answer and the JWT token entered exists in the database but the user corresponding to that JWT token is signed out.
     @Test
     public void editAnswerWithSignedOutUser() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid?content=edited_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken3"))
+        AnswerEditRequest ar = new AnswerEditRequest();
+        ar.setContent("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken3"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-002"));
     }
@@ -67,7 +113,15 @@ public class AnswerControllerTest {
     //This test case passes when you try to edit the answer which does not exist in the database.
     @Test
     public void editNonExistingAnswer() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/non_existing_answer_uuid?content=edited_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken1"))
+        AnswerEditRequest ar = new AnswerEditRequest();
+        ar.setContent("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/non_existing_answer_uuid").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken1"))
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ANS-001"));
     }
@@ -75,7 +129,15 @@ public class AnswerControllerTest {
     //This test case passes when you try to edit the answer and the JWT token entered exists in the database and the user corresponding to that JWT token is signed in but the corresponding user is not the owner of the answer.
     @Test
     public void editAnswerWithoutOwnership() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid?content=edited_answer").contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken"))
+        AnswerEditRequest ar = new AnswerEditRequest();
+        ar.setContent("test answer");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(ar );
+
+        mvc.perform(MockMvcRequestBuilders.put("/answer/edit/database_answer_uuid").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8_VALUE).header("authorization", "database_accesstoken"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-003"));
     }
@@ -83,6 +145,7 @@ public class AnswerControllerTest {
     //This test case passes when you try to delete the answer but the JWT token entered does not exist in the database.
     @Test
     public void deleteAnswerWithNonExistingAccessToken() throws Exception {
+
         mvc.perform(MockMvcRequestBuilders.delete("/answer/delete/database_answer_uuid").header("authorization", "non_existing_access_token"))
                 .andExpect(status().isForbidden())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("ATHR-001"));

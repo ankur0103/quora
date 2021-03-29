@@ -7,6 +7,7 @@ import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import com.upgrad.quora.service.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
@@ -29,7 +30,7 @@ public class UserDetailsService {
         return userEntity;
     }
 
-
+    @Transactional(propagation = Propagation.REQUIRED)
     public UserAuthTokenEntity getUserDetailsByAccessToken(final String accessToken) throws  AuthorizationFailedException {
         UserAuthTokenEntity userAuthTokenEntity = userDao.getUserAuthToken(accessToken);
 
@@ -39,7 +40,11 @@ public class UserDetailsService {
         final ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime tokenExpireTime = userAuthTokenEntity.getExpiresAt();
 
-        if (userAuthTokenEntity.getLogoutAt() != null || tokenExpireTime.compareTo(now) < 0) {
+
+//        if (userAuthTokenEntity.getLogoutAt() != null || tokenExpireTime.compareTo(now) < 0) {
+
+
+            if (userAuthTokenEntity.getLogoutAt() != null) {
 
             throw new AuthorizationFailedException("ATHR-002", "User is signed out.Sign in first to get user details");
         }

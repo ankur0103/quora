@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment =
-        SpringBootTest.WebEnvironment.RANDOM_PORT,
+        SpringBootTest.WebEnvironment.MOCK,
         classes = QuoraApiApplication.class)
 @AutoConfigureMockMvc
 public class UserControllerTest {
@@ -59,9 +59,7 @@ public class UserControllerTest {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(s );
-
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/user/signup").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8))
+        mvc.perform(MockMvcRequestBuilders.post("/user/signup").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isConflict())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("SGR-001"));
     }
@@ -69,7 +67,23 @@ public class UserControllerTest {
     //This test case passes when you signup with an email that already exists in the database.
     @Test
     public void signupWithRepeatedEmail() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post("/user/signup?firstName=a&lastName=a&userName=non_existing_username&emailAddress=database_email&password=a&country=a&aboutMe=a&dob=a&contactNumber=a").contentType(MediaType.APPLICATION_JSON_UTF8))
+
+        SignupUserRequest s = new SignupUserRequest();
+        s.setUserName("different user");
+        s.setAboutMe("database_username");
+        s.setContactNumber("database_username");
+        s.setFirstName("different user");
+        s.setLastName("database_username");
+        s.setDob("database_username");
+        s.setCountry("database_username");
+        s.setEmailAddress("database_email");
+        s.setPassword("database_username");
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(s );
+        mvc.perform(MockMvcRequestBuilders.post("/user/signup").content(requestJson).contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isConflict())
                 .andExpect(MockMvcResultMatchers.jsonPath("code").value("SGR-002"));
     }

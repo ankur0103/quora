@@ -7,9 +7,9 @@ import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "answer", schema = "quora")
+@Table(name = "answer")
 @NamedQueries({
-        @NamedQuery(name = "answerByAnswerId", query = "select a from AnswerEntity a where a.id = :answerId"),
+        @NamedQuery(name = "answerByAnswerId", query = "select a from AnswerEntity a where a.uuid = :answerId"),
         @NamedQuery(name = "answerByQuestionId", query = "select a from AnswerEntity a where a.question = :questionId")
 
 

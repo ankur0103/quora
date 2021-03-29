@@ -38,9 +38,6 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST, path ="/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> signup(@RequestBody  final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
-        if(1==1){
-            throw new SignUpRestrictedException("ddd","ddd");
-        }
 
         final UserEntity userEntity = new UserEntity();
         userEntity.setUuid(UUID.randomUUID().toString());
