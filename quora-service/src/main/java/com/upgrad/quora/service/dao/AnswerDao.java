@@ -1,8 +1,8 @@
 package com.upgrad.quora.service.dao;
 
-import com.upgrad.quora.service.entity.AnswerEntity;
-import org.springframework.stereotype.Repository;
 
+import org.springframework.stereotype.Repository;
+import com.upgrad.quora.service.entity.AnswerEntity;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -33,7 +33,7 @@ public class AnswerDao {
     public AnswerEntity getAnswerByAnswerId(final String answerId) {
 
         try {
-            return entityManager.createNamedQuery("answerByAnswerId", AnswerEntity.class).setParameter("id", answerId).getSingleResult();
+            return entityManager.createNamedQuery("answerByAnswerId", AnswerEntity.class).setParameter("answerId", answerId).getSingleResult();
         } catch (NoResultException nre) {
             return null;
         }

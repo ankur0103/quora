@@ -38,6 +38,9 @@ public class UserController {
 
     @RequestMapping(method = RequestMethod.POST, path ="/user/signup", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<SignupUserResponse> signup(@RequestBody  final SignupUserRequest signupUserRequest) throws SignUpRestrictedException {
+        if(1==1){
+            throw new SignUpRestrictedException("ddd","ddd");
+        }
 
         final UserEntity userEntity = new UserEntity();
         userEntity.setUuid(UUID.randomUUID().toString());
@@ -48,11 +51,9 @@ public class UserController {
         userEntity.setPassword(signupUserRequest.getPassword());
         userEntity.setSalt("1234abc");
         userEntity.setRole("nonadmin");
-
-        final UserEntity createdUserEntity = signupService.signup(userEntity);
-        SignupUserResponse userResponse = new SignupUserResponse().id(createdUserEntity.getUuid()).status("USER SUCCESSFULLY REGISTERED");
-
-        return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
+            final UserEntity createdUserEntity = signupService.signup(userEntity);
+            SignupUserResponse userResponse = new SignupUserResponse().id(createdUserEntity.getUuid()).status("USER SUCCESSFULLY REGISTERED");
+            return new ResponseEntity<SignupUserResponse>(userResponse, HttpStatus.CREATED);
     }
 
 
